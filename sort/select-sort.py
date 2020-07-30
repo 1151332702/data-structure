@@ -8,6 +8,8 @@ def select_sort(arr):
         arr[i], arr[min_index] = arr[min_index], arr[i]
 
 
+# 选择排序的效率优于冒泡排序，冒泡排序在每一轮交换中都大概率进行多次数据交换
+# 但是选择排序在每一轮中只需要进行一次数据交换
 if __name__ == '__main__':
     a = [3, 2, 4, 1]
     select_sort(a)
