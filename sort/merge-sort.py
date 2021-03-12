@@ -1,4 +1,7 @@
+
+
 # 归并  时间复杂度o(nlogn)
+# T(n) = 2*T(n/2) + o(n)
 def merge(arr, low, mid, high):
     a1 = arr[low: mid + 1]
     a2 = arr[mid + 1: high + 1]
