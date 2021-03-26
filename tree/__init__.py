@@ -36,18 +36,22 @@ class BinTree(object):
         while q:
             node = q.pop(0)
             if data:
+                # d = data.pop(0)
+                # l_node = None if d is None else BinTree(d)
                 l_node = BinTree(data.pop(0))
-                node.l_child = l_node
+                node.insert_as_l_child(l_node)
                 q.append(l_node)
 
             if data:
+                # d = data.pop(0)
+                # r_node = None if d is None else BinTree(d)
                 r_node = BinTree(data.pop(0))
-                node.r_child = r_node
+                node.insert_as_r_child(r_node)
                 q.append(r_node)
         return r
 
     # 递归实现前序遍历
-    # 中 左 右
+    # 根 左 右
     def pre_traverse_recursive(self):
         print(self.data)
         if self.l_child:
@@ -55,21 +59,21 @@ class BinTree(object):
         if self.r_child:
             self.r_child.pre_traverse_recursive()
 
-    # 非递归方式实现前序遍历
+    # 非递归方式实现前序遍历，其实是每一轮迭代都朝着树的左下进行，每次都进行访问
     @ staticmethod
     def pre_traverse(node):
         stack = Stack()
-        stack.push(node)
-        while not stack.is_empty():
-            tmp_node = stack.pop()
-            print(tmp_node.data)
-            if tmp_node.r_child:
-                stack.push(tmp_node.r_child)
-            if tmp_node.l_child:
-                stack.push(tmp_node.l_child)
+        while True:
+            while node:
+                print(node.data)
+                stack.push(node.r_child)
+                node = node.l_child
+            if stack.is_empty():
+                break
+            node = stack.pop()
 
     # 递归方式实现中序遍历
-    # 左 中 右
+    # 左 根 右
     @staticmethod
     def mid_traverse_recursive(node):
         if node.l_child:
@@ -78,25 +82,55 @@ class BinTree(object):
         if node.r_child:
             BinTree.mid_traverse_recursive(node.r_child)
 
-    # 非递归方式实现中序遍历
+    # 非递归方式实现中序遍历，每轮遍历依然是往左下进行，进行的过程中不会访问，而是依次入栈
     @staticmethod
     def mid_traverse(node):
         stack = Stack()
-        stack.push(node)
-        while stack:
-            while node.l_child:
-                node = node.l_child
+        while True:
+            while node:
                 stack.push(node)
-            print(stack.pop().data)
+                node = node.l_child
+            if stack.is_empty():
+                break
             node = stack.pop()
             print(node.data)
-            while node.r_child is None:
-                node = stack.pop()
-                print(node.data)
-            print(node.data)
             node = node.r_child
-            stack.push(node)
 
+    # 递归实现后续遍历
+    def post_traverse_recursive(self):
+        if self.l_child:
+            self.l_child.post_traverse_recursive()
+        if self.r_child:
+            self.r_child.post_traverse_recursive()
+        print(self.data)
+
+    # 非递归方式实现后序遍历
+    @staticmethod
+    def post_traverse(node):
+        stack = Stack()
+        stack.push(node)
+        while not stack.is_empty():
+            if stack.top() is not node.parent:  # 栈顶节点不是当前节点的parent，则必为当前节点的右兄节点
+                while stack.top().l_child or stack.top().r_child:
+                    node = stack.top()
+                    if node.r_child:
+                        stack.push(node.r_child)
+                    if node.l_child:
+                        stack.push(node.l_child)
+            node = stack.pop()
+            print(node.data)
+
+    # 层次遍历
+    def traverse_level(self):
+        quque = list()
+        quque.insert(0, self)  # 根节点入队列
+        while quque:
+            node = quque.pop(0)
+            print(node.data)
+            if node.l_child:
+                quque.append(node.l_child)
+            if node.r_child:
+                quque.append(node.r_child)
 
 
 if __name__ == '__main__':
@@ -104,4 +138,7 @@ if __name__ == '__main__':
     # tree.pre_traverse_recursive()
     # BinTree.pre_traverse(tree)
     # BinTree.mid_traverse_recursive(tree)
-    BinTree.mid_traverse(tree)
+    # BinTree.mid_traverse(tree)
+    # tree.post_traverse_recursive()
+    # BinTree.post_traverse(tree)
+    tree.traverse_level()
